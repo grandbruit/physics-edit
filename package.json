@@ -1,6 +1,6 @@
 {
   "name": "physics-edit",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "A cheap thing to generate JSON physics files for use with Phaser.",
   "main": "src/index.js",
   "scripts": {
