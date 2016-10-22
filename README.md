@@ -16,4 +16,4 @@ Run it:
 npm start
 ```
 
-For now, the image is hard-coded, you can't move points after you create them, and the JSON is printed to the console. 💩
+For now, the image is hard-coded, you can't add points between existing points, and the JSON is printed to the console. 💩
