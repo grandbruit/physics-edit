@@ -18,4 +18,5 @@ body {
 canvas {
   background-color: #eee;
   border: 1px solid #ccc;
+  cursor: crosshair;
 }

@@ -13,7 +13,6 @@ image.onload = () => {
   container.addChild(raster);
   Paper.view.viewSize = [raster.width, raster.height];
   raster.position = [raster.width / 2, raster.height / 2];
-  console.log(raster.position);
   
   // Scale down container group if the image is too big for the viewport
   // const scaleRatio = Math.min(1, Paper.view.size.width / raster.width, Paper.view.size.height / raster.height);
@@ -30,10 +29,11 @@ polygonPath.fillColor = new Paper.Color(.2, .6, .9, 0.2);
 polygonPath.closed = 'true';
 polygonPath.selected = 'true';
 
-// Handle click
+// Handle mouse events
 tool.onMouseDown = (event) => {
-  // Add a segment to the path at the position of the mouse
-  polygonPath.add(event.point);
+  if (!polygonPath.selectedSegment) {
+    polygonPath.selectedSegment = polygonPath.add(event.point);
+  }
   
   // Update JSON
   const coordinates = [];
@@ -42,4 +42,20 @@ tool.onMouseDown = (event) => {
   });
   const json = { "date" : [ { "shape" : coordinates } ] };
   console.log(JSON.stringify(json));
+}
+
+tool.onMouseDrag = (event) => {
+  polygonPath.selectedSegment.point = event.point;
+}
+
+tool.onMouseMove = (event) => {
+  polygonPath.selectedSegment = null;
+  polygonPath.segments.forEach((segment) => {
+    if (segment.point.isClose(event.point, 10)) {
+      polygonPath.selectedSegment = segment;
+      segment.selected = true;
+    } else {
+      segment.selected = false;
+    }
+  });
 }
