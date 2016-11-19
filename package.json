@@ -28,6 +28,7 @@
     "yargs": "^4.6.0"
   },
   "dependencies": {
-    "paper": "0.10.2"
+    "paper": "0.10.2",
+    "delaunay-fast": "1.0.1"
   }
 }

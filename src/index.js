@@ -1,4 +1,8 @@
 import Paper from 'paper';
+import Delaunay from 'delaunay-fast';
+
+let roger = Delaunay.triangulate([[0, 0], [10, 0], [10, 20], [0, 20]]);
+// console.log(roger);
 
 Paper.setup('physics-edit');
 
@@ -35,12 +39,38 @@ tool.onMouseDown = (event) => {
     polygonPath.selectedSegment = polygonPath.add(event.point);
   }
   
-  // Update JSON
-  const coordinates = [];
+  // Create an array of vertices suitable for use with delaunay-fast, e.g. [[x, y], [x, y]...]
+  const polygonVertices = [];
   polygonPath.segments.forEach((segment) => {
-    coordinates.push(segment.point.x, segment.point.y);
+    polygonVertices.push([Math.round(segment.point.x), Math.round(segment.point.y)]);
   });
-  const json = { "date" : [ { "shape" : coordinates } ] };
+  
+  // Triangulate using delaunay-fast. This returns an unidimensional array of indices referencing
+  // items from the input array, with no delimitation between triangles.
+  const triangleIndicesRaw = Delaunay.triangulate(polygonVertices);
+  
+  // Split the raw output from delaunay-fast so we have one array per triangle
+  const triangleIndices = [];
+  while (triangleIndicesRaw.length > 0) {
+    triangleIndices.push(triangleIndicesRaw.splice(0, 3));
+  }
+
+  // Substitute indices for actual coordinates, and format the array the way P2 wants it
+  const triangles = [];
+  triangleIndices.forEach((pointIndices) => {
+    triangles.push([].concat.apply([], pointIndices.map((pointIndex) => {
+      return polygonVertices[pointIndex];
+    })));
+  });
+
+  // Update JSON
+  const json = { "date" :
+    triangles.map((triangle) => {
+      return { "shape" : triangle };
+    })
+  };
+  
+  // Output JSON to the console for now
   console.log(JSON.stringify(json));
 }
 

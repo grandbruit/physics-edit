@@ -7,7 +7,7 @@ A cheap thing to generate JSON physics files for use with Phaser.
 You need [Node.js and npm](https://nodejs.org/). Clone the repository, then install dependencies:
 
 ```
-npm install
+npm install --no-optional
 ```
 
 Run it:
