@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "paper": "0.10.2",
-    "delaunay-fast": "1.0.1"
+    "delaunay-fast": "1.0.1",
+    "earcut": "2.1.1"
   }
 }

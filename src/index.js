@@ -1,8 +1,5 @@
 import Paper from 'paper';
-import Delaunay from 'delaunay-fast';
-
-let roger = Delaunay.triangulate([[0, 0], [10, 0], [10, 20], [0, 20]]);
-// console.log(roger);
+import earcut from 'earcut';
 
 Paper.setup('physics-edit');
 
@@ -17,10 +14,6 @@ image.onload = () => {
   container.addChild(raster);
   Paper.view.viewSize = [raster.width, raster.height];
   raster.position = [raster.width / 2, raster.height / 2];
-  
-  // Scale down container group if the image is too big for the viewport
-  // const scaleRatio = Math.min(1, Paper.view.size.width / raster.width, Paper.view.size.height / raster.height);
-  // container.scale(scaleRatio);
 };
 
 // Create polygon drawing tool
@@ -39,30 +32,30 @@ tool.onMouseDown = (event) => {
     polygonPath.selectedSegment = polygonPath.add(event.point);
   }
   
-  // Create an array of vertices suitable for use with delaunay-fast, e.g. [[x, y], [x, y]...]
+  // Create a flat array of vertices suitable for use with earcut
   const polygonVertices = [];
   polygonPath.segments.forEach((segment) => {
-    polygonVertices.push([Math.round(segment.point.x), Math.round(segment.point.y)]);
+    polygonVertices.push(Math.round(segment.point.x), Math.round(segment.point.y));
   });
   
   // Triangulate using delaunay-fast. This returns an unidimensional array of indices referencing
   // items from the input array, with no delimitation between triangles.
-  const triangleIndicesRaw = Delaunay.triangulate(polygonVertices);
+  const triangleIndicesRaw = earcut(polygonVertices);
   
   // Split the raw output from delaunay-fast so we have one array per triangle
   const triangleIndices = [];
   while (triangleIndicesRaw.length > 0) {
     triangleIndices.push(triangleIndicesRaw.splice(0, 3));
   }
-
+  
   // Substitute indices for actual coordinates, and format the array the way P2 wants it
   const triangles = [];
   triangleIndices.forEach((pointIndices) => {
     triangles.push([].concat.apply([], pointIndices.map((pointIndex) => {
-      return polygonVertices[pointIndex];
+      return [polygonVertices[pointIndex * 2], polygonVertices[pointIndex * 2 + 1]];
     })));
   });
-
+  
   // Update JSON
   const json = { "date" :
     triangles.map((triangle) => {
