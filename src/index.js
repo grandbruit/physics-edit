@@ -7,11 +7,12 @@ Paper.setup('physics-edit');
 const container = new Paper.Group;
 
 const image = document.createElement('img');
-image.src = '/images/date.png';
+image.src = '/images/test.png';
 image.onload = () => {
   // Load image and add it to container group
 	const raster = new Paper.Raster(image);
   container.addChild(raster);
+  raster.sendToBack();
   Paper.view.viewSize = [raster.width, raster.height];
   raster.position = [raster.width / 2, raster.height / 2];
 };
@@ -20,11 +21,26 @@ image.onload = () => {
 const tool = new Paper.Tool();
 
 // Create polygon path
-const polygonPath = new Paper.Path();
-container.addChild(polygonPath);
-polygonPath.fillColor = new Paper.Color(.2, .6, .9, 0.2);
-polygonPath.closed = 'true';
-polygonPath.selected = 'true';
+let polygonPath = new Paper.Path();
+
+// Import SVG
+Paper.project.importSVG('/images/test.svg', (item) => {
+  for (let i = 0; i < item.children.length; i++) {
+    if (item.children[i].className == 'Path') {
+      polygonPath = item.children[i];
+      break;
+    }
+  }
+  item.remove();
+
+  // Setup polygon path
+  container.addChild(polygonPath);
+  polygonPath.bringToFront();
+  polygonPath.strokeColor = null;
+  polygonPath.fillColor = new Paper.Color(.2, .6, .9, 0.2);
+  polygonPath.closed = 'true';
+  polygonPath.selected = 'true';
+})
 
 // Handle mouse events
 tool.onMouseDown = (event) => {
@@ -57,7 +73,7 @@ tool.onMouseDown = (event) => {
   });
   
   // Update JSON
-  const json = { "date" :
+  const json = { "test" :
     triangles.map((triangle) => {
       return { "shape" : triangle };
     })
