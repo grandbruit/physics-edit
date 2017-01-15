@@ -138,7 +138,7 @@ gulp.task('build', ['copyStatic'], build);
 gulp.task('fastBuild', build);
 gulp.task('serve', ['build'], serve);
 gulp.task('watch-js', ['fastBuild'], browserSync.reload); // Rebuilds and reloads the project when executed.
-gulp.task('watch-static', browserSync.reload);
+gulp.task('watch-static', ['copyStatic'], browserSync.reload);
 
 /**
  * The tasks are executed in the following order:
