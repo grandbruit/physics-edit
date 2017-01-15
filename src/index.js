@@ -17,6 +17,8 @@ image.onload = () => {
   raster.position = [raster.width / 2, raster.height / 2];
 };
 
+let jsonString = '';
+
 // Create polygon drawing tool
 const tool = new Paper.Tool();
 
@@ -65,14 +67,14 @@ tool.onMouseDown = (event) => {
   });
   
   // Update JSON
-  const json = { "test" :
+  const shapeName = document.getElementById('name').value;
+  const json = { [shapeName] :
     triangles.map((triangle) => {
       return { "shape" : triangle };
     })
   };
   
-  // Output JSON to the console for now
-  console.log(JSON.stringify(json));
+  jsonString = JSON.stringify(json);
 }
 
 tool.onMouseDrag = (event) => {
@@ -164,9 +166,18 @@ document.getElementById('export-svg').addEventListener('click', () => {
   element.click();
 
   document.body.removeChild(element);
-  
-  console.log('export svg');
 })
 document.getElementById('export-json').addEventListener('click', () => {
-  console.log('export json');
+  const element = document.createElement('a');
+  const filename = document.getElementById('name').value + '.json';
+  
+  element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonString));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
 })
