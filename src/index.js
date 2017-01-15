@@ -127,6 +127,14 @@ document.getElementById('import-svg').addEventListener('change', (e) => {
             polygonPath = reducedItem;
             break;
           }
+          if (reducedItem.className == 'Group') {
+            for (let j = 0; j < reducedItem.children.length; j++) {
+              if (reducedItem.children[j].className == 'Path') {
+                polygonPath = reducedItem.children[j];
+                break;
+              }
+            }
+          }
         }
         item.remove();
 
@@ -138,6 +146,25 @@ document.getElementById('import-svg').addEventListener('change', (e) => {
   }
 })
 document.getElementById('export-svg').addEventListener('click', () => {
+  const element = document.createElement('a');
+  const exportOptions = { 
+    asString: true, 
+    matchShapes: true, 
+    embedImages: false 
+  };
+  const svgString = Paper.project.exportSVG(exportOptions);
+  const filename = document.getElementById('name').value + '.svg';
+  
+  element.setAttribute('href', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+  
   console.log('export svg');
 })
 document.getElementById('export-json').addEventListener('click', () => {
