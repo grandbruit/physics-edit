@@ -23,24 +23,16 @@ const tool = new Paper.Tool();
 // Create polygon path
 let polygonPath = new Paper.Path();
 
-// Import SVG
-Paper.project.importSVG('/images/test.svg', (item) => {
-  for (let i = 0; i < item.children.length; i++) {
-    if (item.children[i].className == 'Path') {
-      polygonPath = item.children[i];
-      break;
-    }
-  }
-  item.remove();
-
-  // Setup polygon path
+function setupPolygonPath(polygonPath) {
   container.addChild(polygonPath);
   polygonPath.bringToFront();
   polygonPath.strokeColor = null;
   polygonPath.fillColor = new Paper.Color(.2, .6, .9, 0.2);
   polygonPath.closed = 'true';
   polygonPath.selected = 'true';
-})
+}
+
+setupPolygonPath(polygonPath);
 
 // Handle mouse events
 tool.onMouseDown = (event) => {
@@ -118,8 +110,32 @@ document.getElementById('import-template').addEventListener('change', (e) => {
     reader.readAsDataURL(input.files[0]);
   }
 })
-document.getElementById('import-svg').addEventListener('change', () => {
-  console.log('import svg');
+document.getElementById('import-svg').addEventListener('change', (e) => {
+  const input = e.target;
+  
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = (e) => {
+      polygonPath.remove();
+
+      // Import SVG
+      Paper.project.importSVG(e.target.result, (item) => {
+        for (let i = 0; i < item.children.length; i++) {
+          const reducedItem = item.children[i].reduce();
+          if (reducedItem.className == 'Path') {
+            polygonPath = reducedItem;
+            break;
+          }
+        }
+        item.remove();
+
+        setupPolygonPath(polygonPath)
+      })
+    }
+
+    reader.readAsDataURL(input.files[0]);
+  }
 })
 document.getElementById('export-svg').addEventListener('click', () => {
   console.log('export svg');
