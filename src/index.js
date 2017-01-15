@@ -7,7 +7,7 @@ Paper.setup('physics-edit');
 const container = new Paper.Group;
 
 const image = document.createElement('img');
-image.src = '/images/test.png';
+image.src = '/images/placeholder.png';
 image.onload = () => {
   // Load image and add it to container group
 	const raster = new Paper.Raster(image);
@@ -98,3 +98,32 @@ tool.onMouseMove = (event) => {
     }
   });
 }
+
+// Interface
+document.getElementById('import-template').addEventListener('change', (e) => {
+  const input = e.target;
+
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = (e) => {
+      // Use uploaded image as template
+      image.src = e.target.result;
+      
+      // Automatically fill in shape name based on filename
+      const filename = input.value.split("/").pop().split("\\").pop().split(".").slice(0, -1)[0];
+      document.getElementById('name').value = filename;
+    }
+
+    reader.readAsDataURL(input.files[0]);
+  }
+})
+document.getElementById('import-svg').addEventListener('change', () => {
+  console.log('import svg');
+})
+document.getElementById('export-svg').addEventListener('click', () => {
+  console.log('export svg');
+})
+document.getElementById('export-json').addEventListener('click', () => {
+  console.log('export json');
+})

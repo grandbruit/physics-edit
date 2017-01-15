@@ -7,6 +7,20 @@
 </head>
 <body>
 	<canvas id="physics-edit"></canvas>
+  <header>
+    <div>
+      <input type="file" id="import-template"/>
+      <label for="import-template" class="button">Import PNG Template</label>
+      <input type="file" id="import-svg"/>
+      <label for="import-svg" class="button">Import SVG</label>
+      <button id="export-svg">Export SVG</button>
+    </div>
+    <div>
+      <label for="name">Shape Name</label>
+      <input id="name" type="text" value="shape"/>
+      <button id="export-json">Export JSON</button>
+    </div>
+  </header>
 	<script src="scripts/physics-edit.js"></script>
 </body>
 </html>
